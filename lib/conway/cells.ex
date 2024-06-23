@@ -1,5 +1,4 @@
 defmodule Conway.Cells do
-
   def start() do
     MapSet.new()
   end
@@ -12,26 +11,21 @@ defmodule Conway.Cells do
     MapSet.delete(cells, {frame, location})
   end
 
-  def population_from_cell(cell, cells) do
-    {frame, {x, y}} = cell
+  def population_from_square(square, cells) do
+    {frame, {x, y}} = square
+
     [
-      {x, y-1},
-      {x, y+1},
-      {x-1, y-1},
-      {x-1, y},
-      {x-1, y+1},
-      {x+1, y-1},
-      {x+1, y},
-      {x+1, y+1}
+      {x, y - 1},
+      {x, y + 1},
+      {x - 1, y - 1},
+      {x - 1, y},
+      {x - 1, y + 1},
+      {x + 1, y - 1},
+      {x + 1, y},
+      {x + 1, y + 1}
     ]
+    |> Enum.filter(fn {x, y} -> x > 0 and y > 0 end)
     |> Enum.map(fn p -> MapSet.member?(cells, {frame, p}) end)
     |> Enum.count(& &1)
-
   end
-
-  def cell_next_frame(cells, frame, pos) do
-
-  end
-
-
 end
