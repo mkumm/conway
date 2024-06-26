@@ -35,7 +35,18 @@ defmodule ConwayWeb.GameController do
     ~H"""
     <h1>Game of Life</h1>
     <p>Generation: <%= @frame %>, Population: <%= @population %></p>
-    <button phx-click="next_frame">Next Frame</button>
+    <button
+      phx-click="next_frame"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Next Frame
+    </button>
+    <button
+      phx-click="start_play"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    >
+      Start Play
+    </button>
 
     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <!-- Simple rectangle -->
@@ -47,7 +58,7 @@ defmodule ConwayWeb.GameController do
     """
   end
 
-  def handle_event("next_frame", _, socket) do
+  def handle_info({"next_frame", continue}, socket) do
     cells = build_next_frame(socket.assigns.frame, socket.assigns.cells)
 
     socket =
@@ -56,6 +67,17 @@ defmodule ConwayWeb.GameController do
       |> assign(:frame, socket.assigns.frame + 1)
       |> assign(:population, MapSet.size(cells))
 
+    if continue, do: Process.send_after(self(), {"next_frame", true}, 100)
+    {:noreply, socket}
+  end
+
+  def handle_event("next_frame", _, socket) do
+    send(self(), {"next_frame", false})
+    {:noreply, socket}
+  end
+
+  def handle_event("start_play", _, socket) do
+    Process.send_after(self(), {"next_frame", true}, 500)
     {:noreply, socket}
   end
 

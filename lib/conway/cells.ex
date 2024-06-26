@@ -24,7 +24,7 @@ defmodule Conway.Cells do
       {x + 1, y},
       {x + 1, y + 1}
     ]
-    |> Enum.filter(fn {x, y} -> x > 0 and y > 0 end)
+    |> Enum.filter(fn {x, _} -> (x > 0 and x < 99) or (y > 0 and y < 99) end)
     |> Enum.map(fn p -> MapSet.member?(cells, {frame, p}) end)
     |> Enum.count(& &1)
   end
